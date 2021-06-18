@@ -58,18 +58,20 @@ class Cordinates{
         return false;
     }
 }
+let tileCount = 20;
+let titleSize = canvas.width / tileCount - 2;
+
+
 let newHead = new Cordinates(10,10);
 let parts = [new Cordinates(10,10)];
 let counterM=0;
-let speed = 5;
-
-let tileCount = 20;
-let titleSize = canvas.width / tileCount - 2;
-let tail;
+let speed = 6;
+let counter = 0;
 
 let xVelocity=0;
 let yVelocity=0;
 let movement=[new Cordinates(0,0)];
+let lastMove=[new Cordinates(0,0)];
 
 let score = 0;
 let lenght = 1;
@@ -92,7 +94,7 @@ const losingSoind = new Audio("losing.mp3");
 const youDied = new Audio("YOUDIED.mp3");
 const sword = new Audio("sword.mp3");
 function drawGame(){
-
+    speed = speed+0.0025;
     newHeadPosition();
     collisions();
     //drawApple();
@@ -110,6 +112,7 @@ function drawGame(){
         ctx.font = "50px Verdana";
         ctx.fillText("YOU DIED", canvas.width / 6.5, canvas.height / 2);
     }else{
+        console.log(speed);
         setTimeout(drawGame,1000/speed);
     }
 }
@@ -355,10 +358,22 @@ function newHeadPosition(){
         xVelocity = xVelocity+movement[i].x;
         yVelocity = yVelocity+movement[i].y;
     }
+    xLVelocity=0;
+    yLVelocity=0;
+    for(i=0;i<lastMove.length;i++){
+        xLVelocity = xLVelocity+lastMove[i].x;
+        yLVelocity = yLVelocity+lastMove[i].y;
+    }
+
+    if(xLVelocity + xVelocity == 0&&yLVelocity + yVelocity ==0){
+        movement = lastMove.slice(0,lastMove.length);
+        xVelocity = xLVelocity*2;
+        yVelocity = yLVelocity*2;
+    }
+    lastMove = movement.slice(0,movement.length);
     movement = movement.slice(-1);
     counterM = 0;
 
-    
     newHead.x = (20 + (parts[0].x + xVelocity))%20;
     newHead.y = (20 +  (parts[0].y + yVelocity))%20;
 }
@@ -371,8 +386,15 @@ function keyDown(event){
         xVelocity = 0;
         movement.push(new Cordinates(0,-1));
         counterM++;
-        if(counterM>2){
-            movement.shift();
+        if(counterM>1){
+            if(movement[movement.length-2].compare(movement[movement.length-1])){
+                movement.pop();
+            }
+            else{
+                if(counterM>2){
+                    movement.shift();
+                }
+            }
         }
         return;
     }
@@ -381,8 +403,15 @@ function keyDown(event){
         xVelocity = 0;
         movement.push(new Cordinates(0,1));
         counterM++;
-        if(counterM>2){
-            movement.shift();
+        if(counterM>1){
+            if(movement[movement.length-2].compare(movement[movement.length-1])){
+                movement.pop();
+            }
+            else{
+                if(counterM>2){
+                    movement.shift();
+                }
+            }
         }
         return;
     }
@@ -391,8 +420,15 @@ function keyDown(event){
         xVelocity = -1;
         movement.push(new Cordinates(-1,0));
         counterM++;
-        if(counterM>2){
-            movement.shift();
+        if(counterM>1){
+            if(movement[movement.length-2].compare(movement[movement.length-1])){
+                movement.pop();
+            }
+            else{
+                if(counterM>2){
+                    movement.shift();
+                }
+            }
         }
         return;
     }
@@ -401,27 +437,54 @@ function keyDown(event){
         xVelocity = 1;
         movement.push(new Cordinates(1,0));
         counterM++;
-        if(counterM>2){
-            movement.shift();
+        if(counterM>1){
+            if(movement[movement.length-2].compare(movement[movement.length-1])){
+                movement.pop();
+            }
+            else{
+                if(counterM>2){
+                    movement.shift();
+                }
+            }
         }
         return;
     }
     
     if(event.keyCode == 13){
-        stop = true;
-        speed = 7;
+        newHead = new Cordinates(10,10);
+        parts = [new Cordinates(10,10)];
+        counterM=0;
+        speed = 6;
+        counter = 0;
 
-        headX = 10;
-        headY = 10;
-        snakeParts = [];
-        tailLength = 2;
+        xVelocity=0;
+        yVelocity=0;
+        movement=[new Cordinates(0,0)];
+        lastMove=[new Cordinates(0,0)];
 
         score = 0;
+        lenght = 1;
 
         appleX = 5;
         appleY = 5;
+        eatenApples = [];
+
+        ao = [];
+        obstacles = [];
+
+        free= new RandomArrayPick(400);
+        lives = 3;
+        damage = [];
+        damagep = -1;
+        cleanDamage = undefined;   
+        
+        if(stop){
+            stop = false;
+            drawGame();
+        }
         clearScreen();
-        drawGame();
+        title.innerHTML = "Score: "+score;
+        livesD.innerHTML = "Lives: "+lives;
     }
 
 
@@ -429,3 +492,5 @@ function keyDown(event){
 clearScreen();
 free = new RandomArrayPick(400);
 drawGame();
+title.innerHTML = "Score: "+score;
+livesD.innerHTML = "Lives: "+lives;
