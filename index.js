@@ -17,7 +17,7 @@ class RandomArrayPick{
             this.active = this.active-1;
             return;
         }
-        console.log("You are not using this function as it's supposed to be used:) (Remove)");
+        //console.log("You are not using this function as it's supposed to be used:) (Remove)");
     }
     add(value){
         if(!this.array[value]){
@@ -25,7 +25,7 @@ class RandomArrayPick{
             this.active = this.active +1;
             return;
         }
-        console.log("You are not using this function as it's supposed to be used:) (add)");
+        //console.log("You are not using this function as it's supposed to be used:) (add)");
     }
     pickRandom(){
         if(this.active == 0){
@@ -112,7 +112,7 @@ function drawGame(){
         ctx.font = "50px Verdana";
         ctx.fillText("YOU DIED", canvas.width / 6.5, canvas.height / 2);
     }else{
-        console.log(speed);
+        //console.log(speed);
         setTimeout(drawGame,1000/speed);
     }
 }
